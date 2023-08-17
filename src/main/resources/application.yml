@@ -1,0 +1,64 @@
+quarkus:
+  http:
+    port: 8080
+    cors:
+      ~: true
+      origins: http://localhost:8080,http://localhost:4200
+      headers: accept, authorization, content-type, x-requested-with
+      methods: GET, POST, PUT, DELETE, OPTION
+      exposed-headers: Content-Disposition,Set-Cookie
+      access-control-allow-credentials: true
+  datasource:
+    devservices:
+      enabled: false
+  hibernate-orm:
+    database:
+      generation: update
+  naming:
+    enable-jndi: true
+  metrics:
+    enable: true
+    export:
+      # Choose Prometheus as the metrics exporter
+      prometheus:
+        enabled: true
+        path: /q/metrics
+
+  package:
+    type: uber-jar
+
+  smallrye-openapi:
+    info-title: TODO
+    info-version: 1.0.0
+    info-description: API for the TODO
+    info-terms-of-service: Your terms here
+  swagger-ui:
+    always-include: false
+    title: Todo API
+    footer: 2023 . com.example
+    theme: original
+  health:
+    openapi:
+      included: true
+
+"%dev":
+  quarkus:
+    hibernate-orm:
+      database:
+        default-catalog: todo
+    datasource:
+      devservices:
+        enabled: false
+      db-kind: postgresql
+      username: test
+      password: test
+      reactive:
+        url: postgresql://localhost:5432/todo
+        max-size: 10
+    smallrye-openapi:
+      info-title: Todo (development)
+
+"%test":
+  quarkus:
+    smallrye-openapi:
+      info-title: Todo (DevTest)
