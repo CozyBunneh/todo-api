@@ -1,12 +1,15 @@
 package com.example.todo;
 
 import java.net.URI;
+import java.util.Optional;
 
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import javax.swing.text.html.Option;
 
 @Path("/todos")
 public class TodoResource {
@@ -16,8 +19,17 @@ public class TodoResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<PaginationResponseV1<TodoV1>> getPaginated(@QueryParam("page_index") Integer pageIndex, @QueryParam("page_size") Integer pageSize) {
-        return repository.getAllPaginated(pageIndex, pageSize).onItem().transform(paginatedData -> {
+    public Uni<PaginationResponseV1<TodoV1>> getPaginated(@QueryParam("page_index") Integer pageIndex,
+                                                          @QueryParam("page_size") Integer pageSize,
+                                                          @QueryParam("query") String query,
+                                                          @QueryParam("filter_by_completed") Boolean filterByCompleted) {
+        Optional<String> filterQuery = query == null || query.isEmpty()
+                ? Optional.empty()
+                : Optional.of(query.trim());
+        Optional<Boolean> filterCompleted = filterByCompleted == null
+                ? Optional.empty()
+                : Optional.of(filterByCompleted);
+        return repository.getAllPaginated(pageIndex, pageSize, filterQuery, filterCompleted).onItem().transform(paginatedData -> {
             if (paginatedData == null) {
                 throw new NotFoundException("Paginated data could not be found");
             }

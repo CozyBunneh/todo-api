@@ -1,6 +1,10 @@
 package com.example.todo;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import io.quarkus.hibernate.reactive.panache.PanacheQuery;
 import io.quarkus.hibernate.reactive.panache.PanacheRepository;
@@ -13,9 +17,18 @@ import jakarta.ws.rs.NotFoundException;
 public class TodoRepository implements PanacheRepository<Todo> {
 
     @WithTransaction
-    public Uni<PaginationResponseV1<Todo>> getAllPaginated(Integer pageIndex, Integer pageSize) {
+    public Uni<PaginationResponseV1<Todo>> getAllPaginated(Integer pageIndex, Integer pageSize, Optional<String> searchQuery, Optional<Boolean> filterCompleted) {
         var totalUni = count();
-        PanacheQuery<Todo> todosQuery = find("");
+        Map<String, Tuple<QueryType, Object>> parameters = new HashMap<>();
+        addIfNotNull(parameters, QueryType.Like, "title", searchQuery);
+        addIfNotNull(parameters, QueryType.Equals, "completed", filterCompleted);
+        String query = parameters.entrySet().stream()
+                .map(x -> String.format("%s %s :%s",
+                        x.getKey(),
+                        x.getValue().x().sqlCompareSymbol(),
+                        x.getKey()))
+                .collect(Collectors.joining(" and "));
+        PanacheQuery<Todo> todosQuery = find(query, transformParameterMapToCorrectFormat(parameters));
         Uni<List<Todo>> todosPagedQuery = todosQuery.page(pageIndex, pageSize).list();
         var todosUni = todosPagedQuery.onItem().transform(t -> {
             if (t == null) {
@@ -31,10 +44,24 @@ public class TodoRepository implements PanacheRepository<Todo> {
         }));
     }
 
+    private static <T> void addIfNotNull(Map<String, Tuple<QueryType, Object>> map, QueryType queryType, String key, Optional<T> value) {
+        value.ifPresent(v -> map.put(key, new Tuple(queryType, v)));
+    }
+
+    private static Map<String, Object> transformParameterMapToCorrectFormat(Map<String, Tuple<QueryType, Object>> parameters) {
+         return parameters.entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey(),
+                        e -> {
+                           return QueryType.Like.id().equals(e.getValue().x().id())
+                                   ? "%" + e.getValue().y() + "%"
+                                   : e.getValue().y();
+                        }
+                ));
+    }
+
     @WithTransaction
     public Uni<Todo> getById(Long id) {
-        // Uni<Todo> todo = Todo.findById(id);
-
         Uni<Todo> todo = findById(id);
         return todo.onItem().transform(t -> {
             if (t == null) {
@@ -46,41 +73,14 @@ public class TodoRepository implements PanacheRepository<Todo> {
 
     @WithTransaction
     public Uni<Todo> create(Todo todo) {
-        // Uni<Todo> todoUni = Todo.findById(todo.id);
         Uni<Todo> todoUni = findById(todo.id);
         return todoUni.onItem().transform(t -> {
             if (t != null) {
                 throw new IllegalArgumentException("The Todo already exists.");
             }
-            // createPrioritySilently(todo.priority);
-            // Todo newTodo = new Todo();
-            // newTodo.title = todo.title;
-            // newTodo.completed = todo.completed;
-            // return newTodo;
             return todo;
         }).call(t -> persist(t));
     }
-
-    // @WithTransaction
-    // public Uni<Void> createPriority(Priority priority) {
-    // Uni<Priority> priorityUni = Priority.findById(priority.priorityId);
-    // return priorityUni.onItem().transform(p -> {
-    // if (p != null) {
-    // throw new IllegalArgumentException("The Priority already exists.");
-    // }
-    // return priority;
-    // }).call(p -> Priority.persist(p)).replaceWithVoid();
-    // }
-
-    // private Uni<Void> createPrioritySilently(Priority priority) {
-    // try {
-    // return createPriority(priority);
-    // } catch (IllegalArgumentException e) {
-    // return Uni.createFrom().item(null);
-    // } catch (ConstraintViolationException e) {
-    // return Uni.createFrom().item(null);
-    // }
-    // }
 
     @WithTransaction
     public Uni<Todo> update(Todo todo) {
@@ -89,7 +89,6 @@ public class TodoRepository implements PanacheRepository<Todo> {
             if (t == null) {
                 throw new IllegalArgumentException("Todo with id " + todo.id + " doesn't exist.");
             }
-            // createPrioritySilently(todo.priority);
             return todo;
         }).call(t -> update("title = ?1, completed = ?2, priority_id = ?3 WHERE id = ?4", todo.title,
                 todo.completed,
