@@ -45,18 +45,16 @@ public class TodoRepository implements PanacheRepository<Todo> {
     }
 
     private static <T> void addIfNotNull(Map<String, Tuple<QueryType, Object>> map, QueryType queryType, String key, Optional<T> value) {
-        value.ifPresent(v -> map.put(key, new Tuple(queryType, v)));
+        value.ifPresent(v -> map.put(key, new Tuple<>(queryType, v)));
     }
 
     private static Map<String, Object> transformParameterMapToCorrectFormat(Map<String, Tuple<QueryType, Object>> parameters) {
          return parameters.entrySet().stream()
                 .collect(Collectors.toMap(
-                        e -> e.getKey(),
-                        e -> {
-                           return QueryType.Like.id().equals(e.getValue().x().id())
-                                   ? "%" + e.getValue().y() + "%"
-                                   : e.getValue().y();
-                        }
+                        Map.Entry::getKey,
+                        e -> QueryType.Like.id().equals(e.getValue().x().id())
+                                ? "%" + e.getValue().y() + "%"
+                                : e.getValue().y()
                 ));
     }
 
@@ -79,7 +77,7 @@ public class TodoRepository implements PanacheRepository<Todo> {
                 throw new IllegalArgumentException("The Todo already exists.");
             }
             return todo;
-        }).call(t -> persist(t));
+        }).call(this::persist);
     }
 
     @WithTransaction

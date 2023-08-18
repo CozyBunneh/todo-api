@@ -20,13 +20,13 @@ public record PriorityV1(Long id, String name) {
 
     public static PriorityV1 fromEntity(Priority priority) {
         var id = priority.priorityId;
-        if (id == Highest.id()) {
+        if (Highest.id().equals(id)) {
             return Highest;
-        } else if (id == High.id()) {
+        } else if (High.id().equals(id)) {
             return High;
-        } else if (id == Medium.id()) {
+        } else if (Medium.id().equals(id)) {
             return Medium;
-        } else if (id == Low.id()) {
+        } else if (Low.id().equals(id)) {
             return Low;
         } else {
             return Lowest;
@@ -34,13 +34,13 @@ public record PriorityV1(Long id, String name) {
     }
 
     public static PriorityV1 fromId(Long id) {
-        if (id == Highest.id()) {
+        if (Highest.id().equals(id)) {
             return Highest;
-        } else if (id == High.id()) {
+        } else if (High.id().equals(id)) {
             return High;
-        } else if (id == Medium.id()) {
+        } else if (Medium.id().equals(id)) {
             return Medium;
-        } else if (id == Low.id()) {
+        } else if (Low.id().equals(id)) {
             return Low;
         } else {
             return Lowest;

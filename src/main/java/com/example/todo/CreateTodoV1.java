@@ -7,13 +7,13 @@ public record CreateTodoV1(String title, boolean completed, Long priorityId) {
     }
 
     public Priority fromPriorityId() {
-        if (priorityId() == PriorityV1.Highest.id()) {
+        if (PriorityV1.Highest.id().equals(priorityId())) {
             return PriorityV1.Highest.toEntity();
-        } else if (priorityId() == PriorityV1.High.id()) {
+        } else if (PriorityV1.High.id().equals(priorityId())) {
             return PriorityV1.High.toEntity();
-        } else if (priorityId() == PriorityV1.Medium.id()) {
+        } else if (PriorityV1.Medium.id().equals(priorityId())) {
             return PriorityV1.Medium.toEntity();
-        } else if (priorityId() == PriorityV1.Low.id()) {
+        } else if (PriorityV1.Low.id().equals(priorityId())) {
             return PriorityV1.Low.toEntity();
         } else {
             return PriorityV1.Lowest.toEntity();
