@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import io.quarkus.hibernate.reactive.panache.PanacheQuery;
 import io.quarkus.hibernate.reactive.panache.PanacheRepository;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
+import io.quarkus.panache.common.Sort;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
@@ -17,7 +18,8 @@ import jakarta.ws.rs.NotFoundException;
 public class TodoRepository implements PanacheRepository<Todo> {
 
     @WithTransaction
-    public Uni<PaginationResponseV1<Todo>> getAllPaginated(Integer pageIndex, Integer pageSize, Optional<String> searchQuery, Optional<Boolean> filterCompleted) {
+    public Uni<PaginationResponseV1<Todo>> getAllPaginated(Integer pageIndex, Integer pageSize,
+            Optional<String> searchQuery, Optional<Boolean> filterCompleted) {
         var totalUni = count();
         Map<String, Tuple<QueryType, Object>> parameters = new HashMap<>();
         addIfNotNull(parameters, QueryType.Like, "title", searchQuery);
@@ -28,7 +30,7 @@ public class TodoRepository implements PanacheRepository<Todo> {
                         x.getValue().x().sqlCompareSymbol(),
                         x.getKey()))
                 .collect(Collectors.joining(" and "));
-        PanacheQuery<Todo> todosQuery = find(query, transformParameterMapToCorrectFormat(parameters));
+        PanacheQuery<Todo> todosQuery = find(query, Sort.by("id"), transformParameterMapToCorrectFormat(parameters));
         Uni<List<Todo>> todosPagedQuery = todosQuery.page(pageIndex, pageSize).list();
         var todosUni = todosPagedQuery.onItem().transform(t -> {
             if (t == null) {
@@ -36,26 +38,28 @@ public class TodoRepository implements PanacheRepository<Todo> {
             }
             return t;
         });
-        // Run the unis sequentially, this can also be done with `Uni.join().all(totalUni, todosUni).usingConcurrency(1)`.
+        // Run the unis sequentially, this can also be done with
+        // `Uni.join().all(totalUni, todosUni).usingConcurrency(1)`.
         return totalUni.flatMap(total -> todosUni.map(todos -> {
-            double lastPageExact = (double)total / pageSize;
-            Integer lastPage = (int)Math.ceil(lastPageExact);
+            double lastPageExact = (double) total / pageSize;
+            Integer lastPage = (int) Math.ceil(lastPageExact);
             return new PaginationResponseV1<Todo>(todos, pageIndex, pageSize, lastPage, total);
         }));
     }
 
-    private static <T> void addIfNotNull(Map<String, Tuple<QueryType, Object>> map, QueryType queryType, String key, Optional<T> value) {
+    private static <T> void addIfNotNull(Map<String, Tuple<QueryType, Object>> map, QueryType queryType, String key,
+            Optional<T> value) {
         value.ifPresent(v -> map.put(key, new Tuple<>(queryType, v)));
     }
 
-    private static Map<String, Object> transformParameterMapToCorrectFormat(Map<String, Tuple<QueryType, Object>> parameters) {
-         return parameters.entrySet().stream()
+    private static Map<String, Object> transformParameterMapToCorrectFormat(
+            Map<String, Tuple<QueryType, Object>> parameters) {
+        return parameters.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         e -> QueryType.Like.id().equals(e.getValue().x().id())
                                 ? "%" + e.getValue().y() + "%"
-                                : e.getValue().y()
-                ));
+                                : e.getValue().y()));
     }
 
     @WithTransaction
