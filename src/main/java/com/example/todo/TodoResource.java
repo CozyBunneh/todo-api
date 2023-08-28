@@ -9,8 +9,6 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import javax.swing.text.html.Option;
-
 @Path("/todos")
 public class TodoResource {
 
@@ -20,21 +18,24 @@ public class TodoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<PaginationResponseV1<TodoV1>> getPaginated(@QueryParam("page_index") Integer pageIndex,
-                                                          @QueryParam("page_size") Integer pageSize,
-                                                          @QueryParam("query") String query,
-                                                          @QueryParam("filter_by_completed") Boolean filterByCompleted) {
+            @QueryParam("page_size") Integer pageSize,
+            @QueryParam("query") String query,
+            @QueryParam("filter_by_completed") Boolean filterByCompleted) {
         Optional<String> filterQuery = query == null || query.isEmpty()
                 ? Optional.empty()
-                : Optional.of(query.trim());
+                : Optional.of(query.trim().toLowerCase());
         Optional<Boolean> filterCompleted = filterByCompleted == null
                 ? Optional.empty()
-                : Optional.of(filterByCompleted);
-        return repository.getAllPaginated(pageIndex, pageSize, filterQuery, filterCompleted).onItem().transform(paginatedData -> {
-            if (paginatedData == null) {
-                throw new NotFoundException("Paginated data could not be found");
-            }
-            return new PaginationResponseV1<TodoV1>(TodoV1.fromEntities(paginatedData.data()), paginatedData.pageIndex(), paginatedData.pageSize(), paginatedData.totalPages(), paginatedData.totalItems());
-        });
+                : Optional.of(!filterByCompleted);
+        return repository.getAllPaginated(pageIndex, pageSize, filterQuery, filterCompleted).onItem()
+                .transform(paginatedData -> {
+                    if (paginatedData == null) {
+                        throw new NotFoundException("Paginated data could not be found");
+                    }
+                    return new PaginationResponseV1<TodoV1>(TodoV1.fromEntities(paginatedData.data()),
+                            paginatedData.pageIndex(), paginatedData.pageSize(), paginatedData.totalPages(),
+                            paginatedData.totalItems());
+                });
     }
 
     @GET

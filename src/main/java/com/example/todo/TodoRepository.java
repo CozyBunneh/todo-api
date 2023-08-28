@@ -20,17 +20,20 @@ public class TodoRepository implements PanacheRepository<Todo> {
     @WithTransaction
     public Uni<PaginationResponseV1<Todo>> getAllPaginated(Integer pageIndex, Integer pageSize,
             Optional<String> searchQuery, Optional<Boolean> filterCompleted) {
-        var totalUni = count();
         Map<String, Tuple<QueryType, Object>> parameters = new HashMap<>();
         addIfNotNull(parameters, QueryType.Like, "title", searchQuery);
         addIfNotNull(parameters, QueryType.Equals, "completed", filterCompleted);
         String query = parameters.entrySet().stream()
                 .map(x -> String.format("%s %s :%s",
-                        x.getKey(),
+                        QueryType.Like.id().equals(x.getValue().x().id()) ? "lower(" + x.getKey() + ")" : x.getKey(),
                         x.getValue().x().sqlCompareSymbol(),
                         x.getKey()))
                 .collect(Collectors.joining(" and "));
-        PanacheQuery<Todo> todosQuery = find(query, Sort.by("id"), transformParameterMapToCorrectFormat(parameters));
+        Map<String, Object> paramsMap = transformParameterMapToCorrectFormat(parameters);
+        System.out.println("\n\n" + query.toString());
+        System.out.println(paramsMap.toString() + "\n\n");
+        var totalUni = count(query, paramsMap);
+        PanacheQuery<Todo> todosQuery = find(query, Sort.by("id"), paramsMap);
         Uni<List<Todo>> todosPagedQuery = todosQuery.page(pageIndex, pageSize).list();
         var todosUni = todosPagedQuery.onItem().transform(t -> {
             if (t == null) {
