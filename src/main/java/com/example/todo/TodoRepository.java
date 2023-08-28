@@ -30,8 +30,6 @@ public class TodoRepository implements PanacheRepository<Todo> {
                         x.getKey()))
                 .collect(Collectors.joining(" and "));
         Map<String, Object> paramsMap = transformParameterMapToCorrectFormat(parameters);
-        System.out.println("\n\n" + query.toString());
-        System.out.println(paramsMap.toString() + "\n\n");
         var totalUni = count(query, paramsMap);
         PanacheQuery<Todo> todosQuery = find(query, Sort.by("id"), paramsMap);
         Uni<List<Todo>> todosPagedQuery = todosQuery.page(pageIndex, pageSize).list();
