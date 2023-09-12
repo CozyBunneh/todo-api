@@ -1,8 +1,12 @@
-package com.example.todo;
+package com.example.todo.api;
 
 import java.net.URI;
 import java.util.Optional;
 
+import com.example.todo.infrastructure.persistence.TodoRepository;
+import com.example.todo.api.models.CreateTodoV1;
+import com.example.todo.api.models.PaginationResponseV1;
+import com.example.todo.api.models.TodoV1;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -18,9 +22,9 @@ public class TodoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<PaginationResponseV1<TodoV1>> getPaginated(@QueryParam("page_index") Integer pageIndex,
-            @QueryParam("page_size") Integer pageSize,
-            @QueryParam("query") String query,
-            @QueryParam("filter_by_completed") Boolean filterByCompleted) {
+                                                          @QueryParam("page_size") Integer pageSize,
+                                                          @QueryParam("query") String query,
+                                                          @QueryParam("filter_by_completed") Boolean filterByCompleted) {
         Optional<String> filterQuery = query == null || query.isEmpty()
                 ? Optional.empty()
                 : Optional.of(query.trim().toLowerCase());

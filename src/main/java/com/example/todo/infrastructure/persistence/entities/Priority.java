@@ -1,12 +1,14 @@
-package com.example.todo;
+package com.example.todo.infrastructure.persistence.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "priority")
+@Data
 public class Priority {
     @Id
     @Column(name = "id")

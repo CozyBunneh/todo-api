@@ -1,4 +1,4 @@
-package com.example.todo;
+package com.example.todo.infrastructure.persistence;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,6 +6,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.todo.infrastructure.persistence.entities.QueryType;
+import com.example.todo.infrastructure.persistence.entities.Todo;
+import com.example.todo.infrastructure.persistence.entities.Tuple;
+import com.example.todo.api.models.PaginationResponseV1;
 import io.quarkus.hibernate.reactive.panache.PanacheQuery;
 import io.quarkus.hibernate.reactive.panache.PanacheRepository;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
@@ -19,7 +23,7 @@ public class TodoRepository implements PanacheRepository<Todo> {
 
     @WithTransaction
     public Uni<PaginationResponseV1<Todo>> getAllPaginated(Integer pageIndex, Integer pageSize,
-            Optional<String> searchQuery, Optional<Boolean> filterCompleted) {
+                                                           Optional<String> searchQuery, Optional<Boolean> filterCompleted) {
         Map<String, Tuple<QueryType, Object>> parameters = new HashMap<>();
         addIfNotNull(parameters, QueryType.Like, "title", searchQuery);
         addIfNotNull(parameters, QueryType.Equals, "completed", filterCompleted);

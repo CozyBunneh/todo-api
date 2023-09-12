@@ -1,8 +1,9 @@
-package com.example.todo;
+package com.example.todo.api.models;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.example.todo.infrastructure.persistence.entities.Todo;
 import io.smallrye.mutiny.Uni;
 
 public record TodoV1(Long id, String title, boolean completed, PriorityV1 priority) {

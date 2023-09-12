@@ -1,4 +1,4 @@
-package com.example.todo;
+package com.example.todo.infrastructure.persistence.entities;
 
 public record QueryType(Integer id, String name, String sqlCompareSymbol) {
 

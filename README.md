@@ -2,7 +2,7 @@
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+The project is setup with a simple vertically sliced architecture and at the moment there's no real domain since it only offers a CRUD api.
 
 ## Running the application in dev mode
 
