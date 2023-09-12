@@ -81,12 +81,12 @@ public class TodoRepository implements PanacheRepository<Todo> {
     @WithTransaction
     public Uni<Todo> create(Todo todo) {
         Uni<Todo> todoUni = findById(todo.getId());
-        return todoUni.onItem().transform(t -> {
+        return todoUni.onItem().transformToUni(t -> {
             if (t != null) {
                 throw new IllegalArgumentException("The Todo already exists.");
             }
-            return todo;
-        }).call(this::persist);
+            return persist(todo);
+        });
     }
 
     @WithTransaction

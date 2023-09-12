@@ -45,7 +45,7 @@ public class TodoResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<TodoV1> getById(Long id) {
+    public Uni<TodoV1> getById(@PathParam("id") Long id) {
         return TodoV1.fromEntity(repository.getById(id));
     }
 
