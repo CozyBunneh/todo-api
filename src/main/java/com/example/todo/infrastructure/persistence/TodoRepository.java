@@ -94,7 +94,7 @@ public class TodoRepository implements PanacheRepository<Todo> {
         Uni<Todo> todoUni = findById(todo.getId());
         return todoUni.onItem().transform(t -> {
             if (t == null) {
-                throw new IllegalArgumentException("Todo with id " + todo.getId() + " doesn't exist.");
+                throw new IllegalArgumentException("Todo with id '" + todo.getId() + "' doesn't exist.");
             }
             return todo;
         }).call(t -> update("title = ?1, completed = ?2, priority_id = ?3 WHERE id = ?4", todo.getTitle(),
@@ -106,7 +106,7 @@ public class TodoRepository implements PanacheRepository<Todo> {
     public Uni<Void> delete(Long id) {
         return deleteById(id).onItem().transform(result -> {
             if (!result) {
-                throw new NotFoundException("Todo with id" + id + " was not found.");
+                throw new NotFoundException("Todo with id '" + id + "' was not found.");
             }
             return null;
         });

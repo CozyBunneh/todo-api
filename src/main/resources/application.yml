@@ -48,7 +48,7 @@ quarkus:
         default-catalog: todo
     datasource:
       devservices:
-        enabled: false
+        enabled: true
       db-kind: postgresql
       username: test
       password: test
@@ -58,7 +58,17 @@ quarkus:
     smallrye-openapi:
       info-title: Todo (development)
 
+#
+# Tests are executed with Testcontainers
+#
 "%test":
   quarkus:
     smallrye-openapi:
       info-title: Todo (DevTest)
+    datasource:
+      url: jdbc:tc:postgresql:latest:///db
+      username: demo
+      password: demo
+    hibernate-orm:
+      # dialect must be set explicitly
+      dialect: org.hibernate.dialect.PostgreSQL9Dialect
