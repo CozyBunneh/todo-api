@@ -16,22 +16,11 @@ public record PriorityV1(Long id, String name) {
     }
 
     public static Uni<PriorityV1> fromEntity(Uni<Priority> priority) {
-        return priority.map(p -> fromEntity(p));
+        return priority.map(PriorityV1::fromEntity);
     }
 
     public static PriorityV1 fromEntity(Priority priority) {
-        var id = priority.priorityId;
-        if (Highest.id().equals(id)) {
-            return Highest;
-        } else if (High.id().equals(id)) {
-            return High;
-        } else if (Medium.id().equals(id)) {
-            return Medium;
-        } else if (Low.id().equals(id)) {
-            return Low;
-        } else {
-            return Lowest;
-        }
+        return PriorityV1.fromId(priority.getPriorityId());
     }
 
     public static PriorityV1 fromId(Long id) {

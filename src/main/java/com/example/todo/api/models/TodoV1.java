@@ -25,6 +25,6 @@ public record TodoV1(Long id, String title, boolean completed, PriorityV1 priori
     }
 
     public static TodoV1 fromEntity(Todo todo) {
-        return new TodoV1(todo.id, todo.title, todo.completed, PriorityV1.fromId(todo.priority_id));
+        return new TodoV1(todo.getId(), todo.getTitle(), todo.getCompleted(), PriorityV1.fromId(todo.getPriority_id()));
     }
 }

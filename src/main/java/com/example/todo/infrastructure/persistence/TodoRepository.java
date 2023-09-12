@@ -80,7 +80,7 @@ public class TodoRepository implements PanacheRepository<Todo> {
 
     @WithTransaction
     public Uni<Todo> create(Todo todo) {
-        Uni<Todo> todoUni = findById(todo.id);
+        Uni<Todo> todoUni = findById(todo.getId());
         return todoUni.onItem().transform(t -> {
             if (t != null) {
                 throw new IllegalArgumentException("The Todo already exists.");
@@ -91,15 +91,15 @@ public class TodoRepository implements PanacheRepository<Todo> {
 
     @WithTransaction
     public Uni<Todo> update(Todo todo) {
-        Uni<Todo> todoUni = findById(todo.id);
+        Uni<Todo> todoUni = findById(todo.getId());
         return todoUni.onItem().transform(t -> {
             if (t == null) {
-                throw new IllegalArgumentException("Todo with id " + todo.id + " doesn't exist.");
+                throw new IllegalArgumentException("Todo with id " + todo.getId() + " doesn't exist.");
             }
             return todo;
-        }).call(t -> update("title = ?1, completed = ?2, priority_id = ?3 WHERE id = ?4", todo.title,
-                todo.completed,
-                todo.priority_id, todo.id));
+        }).call(t -> update("title = ?1, completed = ?2, priority_id = ?3 WHERE id = ?4", todo.getTitle(),
+                todo.getCompleted(),
+                todo.getPriority_id(), todo.getId()));
     }
 
     @WithTransaction

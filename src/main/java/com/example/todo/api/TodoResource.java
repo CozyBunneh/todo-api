@@ -52,7 +52,7 @@ public class TodoResource {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<Response> create(CreateTodoV1 createTodo) {
-        return repository.create(createTodo.toEntity()).onItem().transform(todo -> URI.create("/todos/" + todo.id))
+        return repository.create(createTodo.toEntity()).onItem().transform(todo -> URI.create("/todos/" + todo.getId()))
                 .onItem().transform(uri -> Response.created(uri).build());
     }
 

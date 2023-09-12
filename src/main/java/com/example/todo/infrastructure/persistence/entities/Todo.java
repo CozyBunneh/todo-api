@@ -1,10 +1,12 @@
 package com.example.todo.infrastructure.persistence.entities;
 
+import io.quarkus.arc.All;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Entity
@@ -14,19 +16,19 @@ public class Todo {// extends PanacheEntity {
 
     @Id
     @GeneratedValue
-    public Long id;
+    private Long id;
 
     @Column(name = "title")
-    public String title;
+    private String title;
 
     @Column(name = "completed")
-    public Boolean completed;
+    private Boolean completed;
 
     // @JoinColumn(name = "priority_id", foreignKey = @ForeignKey(name =
     // "priority_id_fk"))
     // @ManyToOne(optional = false, cascade = CascadeType.ALL)
     // @ManyToOne(optional = false)
-    public Long priority_id;
+    private Long priority_id;
 
     public Todo() {
     }
@@ -35,6 +37,6 @@ public class Todo {// extends PanacheEntity {
         this.id = id;
         this.title = title;
         this.completed = completed;
-        this.priority_id = priority.priorityId;
+        this.priority_id = priority.getPriorityId();
     }
 }
