@@ -15,19 +15,40 @@ quarkus dev
 
 ## Native
 
-### Creating a native executable
+### MacOs M1
+
+first do this so that linux/amd64 images can be built:
+```sh
+podman build -f src/main/docker/Dockerfile.graalvm -t graalvm .
+```
+
+#### Creating a native executable
+
+You can create a native executable using: 
+
+```sh
+quarkus build --native --skip-tests # file generate a 64-bit ARM image
+# or
+./mvnw package -Pnative -Dmaven.test.skip=true -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=podman
+```
+You can then execute your native executable with: `./target/todo-1.0.0-SNAPSHOT-runner`
+
+The runner created will be 64-bit ARM aarch64.
+```sh
+./mvnw package -Pnative -Dmaven.test.skip=true -Dquarkus.native.container-build=true -Dquarkus.native.builder-image=graalvm
+```
+
+### Others
+
+#### Creating a native executable
 
 You can create a native executable using: 
 
 ```sh
 quarkus build --native --skip-tests
+# or
+./mvnw package -Pnative -Dmaven.test.skip=true -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=podman
 ```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-quarkus build --native -Dquarkus.native.container-build=true
-```
-
 You can then execute your native executable with: `./target/todo-1.0.0-SNAPSHOT-runner`
 
 ### Create a native docker image
@@ -50,6 +71,43 @@ mvn package -Dmaven.test.skip=true
 
 ```sh
 podman build -f src/main/docker/Dockerfile.jvm -t todo/todo-api-jvm .
+```
+
+## Podman
+
+### Install
+
+#### MacOS
+
+```sh
+brew install podman-desktop
+```
+
+### Setup Podman Machine
+
+
+```sh
+podman machine init # if you need to init the machine
+podman machine start # to start
+podman machine info # for info
+```
+
+If you need to recreate the machine:
+
+```sh
+podman machine rm # to remove machine
+podman machine init # to init the machine
+```
+
+### Setup Postgres
+
+```sh
+podman run -d --name postgres -e POSTGRES_PASSWORD=test -e POSTGRES_USER=test -p 5432:5432 postgres:11-alpine
+```
+
+get the ip so you can set it in the prod conf in application.yml:
+```sh
+podman container inspect -f '{{.NetworkSettings.IPAddress}}' postgres
 ```
 
 ## Troubleshooting

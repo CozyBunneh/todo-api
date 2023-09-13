@@ -17,8 +17,6 @@ quarkus:
       prometheus:
         enabled: true
         path: /q/metrics
-  package:
-    type: uber-jar
   smallrye-openapi:
     info-title: TODO
     info-version: 1.0.0
@@ -42,6 +40,8 @@ quarkus:
       name: todo
       username: test
       password: test
+      url: localhost
+      port: 5432
     liquibase:
       migrate: true
   quarkus:
@@ -57,9 +57,9 @@ quarkus:
       password: ${custom.db.password}
       jdbc:
         ~: false
-        url: jdbc:postgresql://localhost:5432/${custom.db.name}
+        url: jdbc:postgresql://${custom.db.url}:${custom.db.port}/${custom.db.name}
       reactive:
-        url: postgresql://localhost:5432/${custom.db.name}
+        url: postgresql://${custom.db.url}:${custom.db.port}/${custom.db.name}
         max-size: 10
     smallrye-openapi:
       info-title: Todo (development)
@@ -80,6 +80,8 @@ quarkus:
       name: todo-prod
       username: test
       password: test
+      url: 10.88.0.3
+      port: 5432
     liquibase:
       migrate: true
   quarkus:
@@ -95,9 +97,9 @@ quarkus:
       password: ${custom.db.password}
       jdbc:
         ~: false
-        url: jdbc:postgresql://localhost:5432/${custom.db.name}
+        url: jdbc:postgresql://${custom.db.url}:${custom.db.port}/${custom.db.name}
       reactive:
-        url: postgresql://localhost:5432/${custom.db.name}
+        url: postgresql://${custom.db.url}:${custom.db.port}/${custom.db.name}
         max-size: 10
     smallrye-openapi:
       info-title: Todo (development)
