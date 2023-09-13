@@ -8,12 +8,6 @@ quarkus:
       methods: GET, POST, PUT, DELETE, OPTION
       exposed-headers: Content-Disposition,Set-Cookie
       access-control-allow-credentials: true
-  datasource:
-    devservices:
-      enabled: false
-  hibernate-orm:
-    database:
-      generation: update
   naming:
     enable-jndi: true
   metrics:
@@ -23,10 +17,8 @@ quarkus:
       prometheus:
         enabled: true
         path: /q/metrics
-
   package:
     type: uber-jar
-
   smallrye-openapi:
     info-title: TODO
     info-version: 1.0.0
@@ -37,38 +29,119 @@ quarkus:
     title: Todo API
     footer: 2023 . com.example
     theme: original
-  health:
+  healthv:
     openapi:
       included: true
 
+#
+# Dev configuration
+#
 "%dev":
+  custom:
+    db:
+      name: todo
+      username: test
+      password: test
+    liquibase:
+      migrate: true
   quarkus:
     hibernate-orm:
       database:
-        default-catalog: todo
+        default-catalog: ${custom.db.name}
+        #generation: validate
     datasource:
       devservices:
-        enabled: true
+        enabled: false
       db-kind: postgresql
-      username: test
-      password: test
+      username: ${custom.db.username}
+      password: ${custom.db.password}
+      jdbc:
+        ~: false
+        url: jdbc:postgresql://localhost:5432/${custom.db.name}
       reactive:
-        url: postgresql://localhost:5432/todo
+        url: postgresql://localhost:5432/${custom.db.name}
         max-size: 10
     smallrye-openapi:
       info-title: Todo (development)
+    liquibase:
+      migrate-at-start: true
+      change-log: db/changeLog.xml
+      liquibase-schema-name: public
+      default-schema-name: public
+      database-change-log-lock-table-name: databasechangeloglock
+      database-change-log-table-name: databasechangelog
+
+#
+# Dev configuration
+#
+"%prod":
+  custom:
+    db:
+      name: todo-prod
+      username: test
+      password: test
+    liquibase:
+      migrate: true
+  quarkus:
+    hibernate-orm:
+      database:
+        default-catalog: ${custom.db.name}
+        #generation: validate
+    datasource:
+      devservices:
+        enabled: false
+      db-kind: postgresql
+      username: ${custom.db.username}
+      password: ${custom.db.password}
+      jdbc:
+        ~: false
+        url: jdbc:postgresql://localhost:5432/${custom.db.name}
+      reactive:
+        url: postgresql://localhost:5432/${custom.db.name}
+        max-size: 10
+    smallrye-openapi:
+      info-title: Todo (development)
+    liquibase:
+      migrate-at-start: true
+      change-log: db/changeLog.xml
+      liquibase-schema-name: public
+      default-schema-name: public
+      database-change-log-lock-table-name: databasechangeloglock
+      database-change-log-table-name: databasechangelog
 
 #
 # Tests are executed with Testcontainers
 #
 "%test":
+  custom:
+    db:
+      name: todo
+      username: test
+      password: test
+    liquibase:
+      migrate: true
   quarkus:
+    hibernate-orm:
+      database:
+        default-catalog: ${custom.db.name}
+        generation: validate
+    datasource:
+      devservices:
+        enabled: true
+      db-kind: postgresql
+      username: ${custom.db.username}
+      password: ${custom.db.password}
+      jdbc:
+        ~: false
+        url: jdbc:tc:postgresql:latest:///${custom.db.name}
+      reactive:
+        url: jdbc:tc:postgresql:latest:///${custom.db.name}
     smallrye-openapi:
       info-title: Todo (DevTest)
-    datasource:
-      url: jdbc:tc:postgresql:latest:///db
-      username: demo
-      password: demo
-    hibernate-orm:
-      # dialect must be set explicitly
-      dialect: org.hibernate.dialect.PostgreSQL9Dialect
+    liquibase:
+      migrate-at-start: true
+      change-log: db/changeLog.xml
+      liquibase-schema-name: public
+      default-schema-name: public
+      database-change-log-lock-table-name: databasechangeloglock
+      database-change-log-table-name: databasechangelog

@@ -1,0 +1,30 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="add_todo_sequence" author="julia">
+        <createSequence sequenceName="TODO_SEC" cycle="false" minValue="1" maxValue="9223372036854775807" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet author="julia" id="create-todo-table">
+        <createTable tableName="todo">
+            <column name="id" autoIncrement="true" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="todo_pkey"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="completed" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
