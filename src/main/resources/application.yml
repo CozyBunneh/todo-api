@@ -44,6 +44,8 @@ quarkus:
       port: 5432
     liquibase:
       migrate: true
+      search-paths:
+        - src/main/resources
   quarkus:
     hibernate-orm:
       database:
@@ -68,8 +70,8 @@ quarkus:
       change-log: db/changeLog.xml
       liquibase-schema-name: public
       default-schema-name: public
-      database-change-log-lock-table-name: databasechangeloglock
-      database-change-log-table-name: databasechangelog
+      database-change-log-lock-table-name: database_change_log_lock
+      database-change-log-table-name: database_change_log
 
 #
 # Dev configuration
@@ -80,10 +82,12 @@ quarkus:
       name: todo-prod
       username: test
       password: test
-      url: 10.88.0.3
+      # url: 10.88.0.3
+      url: 172.17.0.2
       port: 5432
     liquibase:
       migrate: true
+      search-paths:
   quarkus:
     hibernate-orm:
       database:
@@ -108,8 +112,8 @@ quarkus:
       change-log: db/changeLog.xml
       liquibase-schema-name: public
       default-schema-name: public
-      database-change-log-lock-table-name: databasechangeloglock
-      database-change-log-table-name: databasechangelog
+      database-change-log-lock-table-name: database_change_log_lock
+      database-change-log-table-name: database_change_log
 
 #
 # Tests are executed with Testcontainers
@@ -122,6 +126,7 @@ quarkus:
       password: test
     liquibase:
       migrate: true
+      search-paths:
   quarkus:
     hibernate-orm:
       database:
@@ -145,5 +150,5 @@ quarkus:
       change-log: db/changeLog.xml
       liquibase-schema-name: public
       default-schema-name: public
-      database-change-log-lock-table-name: databasechangeloglock
-      database-change-log-table-name: databasechangelog
+      database-change-log-lock-table-name: database_change_log_lock
+      database-change-log-table-name: database_change_log
