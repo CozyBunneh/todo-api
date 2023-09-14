@@ -131,6 +131,12 @@ get the ip so you can set it in the prod conf in application.yml:
 podman container inspect -f '{{.NetworkSettings.IPAddress}}' postgres
 ```
 
+## Run Integration Tests
+
+```sh
+./mvnw integration-test -Pnative
+```
+
 ## Troubleshooting
 
 ### MacOS
