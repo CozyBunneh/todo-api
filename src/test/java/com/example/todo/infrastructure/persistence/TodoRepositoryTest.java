@@ -36,7 +36,7 @@ public class TodoRepositoryTest {
         PanacheQuery query = mock(PanacheQuery.class);
         when(todoRepository.find(anyString(), any(Sort.class), anyMap()))
                 .thenReturn(query);
-        var todos = List.of(new Todo(1L, "title1", false, PriorityV1.Lowest.toEntity()));
+        var todos = List.of(new Todo(1L, "title1", false, PriorityV1.Lowest.id()));
         when(query.page(anyInt(), anyInt())).thenReturn(query);
         when(query.list())
                 .thenReturn(Uni.createFrom().item(todos));
@@ -70,7 +70,7 @@ public class TodoRepositoryTest {
         // Arrange
         when(todoRepository.getById(anyLong())).thenCallRealMethod();
         var id = 1L;
-        var todoResponse = new Todo(1L, "title1", false, PriorityV1.Lowest.toEntity());
+        var todoResponse = new Todo(1L, "title1", false, PriorityV1.Lowest.id());
         when(todoRepository.findById(anyLong()))
                 .thenReturn(Uni.createFrom().item(todoResponse));
 
@@ -86,11 +86,11 @@ public class TodoRepositoryTest {
     void testCreateSuccess() {
         // Arrange
         when(todoRepository.create(any(Todo.class))).thenCallRealMethod();
-        var todo = new Todo(null, "todo1", false, PriorityV1.Lowest.toEntity());
+        var todo = new Todo(null, "todo1", false, PriorityV1.Lowest.id());
         when(todoRepository.findById(anyLong()))
                 .thenReturn(Uni.createFrom().nullItem());
         when(todoRepository.persist(any(Todo.class)))
-                .thenReturn(Uni.createFrom().item(new Todo(1L, "todo1", false, PriorityV1.Lowest.toEntity())));
+                .thenReturn(Uni.createFrom().item(new Todo(1L, "todo1", false, PriorityV1.Lowest.id())));
 
         // Act
         var createdTodo = todoRepository.create(todo).await().indefinitely();
@@ -107,9 +107,9 @@ public class TodoRepositoryTest {
     void testCreateAlreadyExists() {
         // Arrange
         when(todoRepository.create(any(Todo.class))).thenCallRealMethod();
-        var todo = new Todo(1L, "todo1", false, PriorityV1.Lowest.toEntity());
+        var todo = new Todo(1L, "todo1", false, PriorityV1.Lowest.id());
         when(todoRepository.findById(anyLong()))
-                .thenReturn(Uni.createFrom().item(new Todo(1L, "todo1", false, PriorityV1.Lowest.toEntity())));
+                .thenReturn(Uni.createFrom().item(new Todo(1L, "todo1", false, PriorityV1.Lowest.id())));
 
         // Act & Assert
         Assertions.assertThrows(
@@ -122,7 +122,7 @@ public class TodoRepositoryTest {
     void testUpdateSuccess() {
         // Arrange
         when(todoRepository.update(any(Todo.class))).thenCallRealMethod();
-        var todo = new Todo(1L, "todo1", false, PriorityV1.Lowest.toEntity());
+        var todo = new Todo(1L, "todo1", false, PriorityV1.Lowest.id());
         when(todoRepository.findById(anyLong()))
                 .thenReturn(Uni.createFrom().item(todo));
         when(todoRepository.update(anyString(), ArgumentMatchers.<Object>any()))
@@ -143,7 +143,7 @@ public class TodoRepositoryTest {
     void testUpdateNotExists() {
         // Arrange
         when(todoRepository.update(any(Todo.class))).thenCallRealMethod();
-        var todo = new Todo(1L, "todo1", false, PriorityV1.Lowest.toEntity());
+        var todo = new Todo(1L, "todo1", false, PriorityV1.Lowest.id());
         when(todoRepository.findById(anyLong()))
                 .thenReturn(Uni.createFrom().nullItem());
         when(todoRepository.update(anyString(), ArgumentMatchers.<Object>any()))

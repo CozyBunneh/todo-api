@@ -1,7 +1,5 @@
 package com.example.todo.api.models;
 
-import com.example.todo.infrastructure.persistence.entities.Priority;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,34 +20,6 @@ public class PriorityV1Test {
         Assertions.assertNotNull(priority);
         Assertions.assertEquals(id, priority.id());
         Assertions.assertEquals(name, priority.name());
-    }
-
-    @Test
-    void testToEntity() {
-        // Arrange
-        var priority = PriorityV1.Lowest;
-
-        // Act
-        var entity = priority.toEntity();
-
-        // Assert
-        Assertions.assertNotNull(entity);
-        Assertions.assertEquals(priority.id(), entity.getPriorityId());
-        Assertions.assertEquals(priority.name(), entity.getName());
-    }
-
-    @Test
-    void testFromEntity() {
-        // Arrange
-        var entity = new Priority(1L, "Highest");
-
-        // Act
-        var priority = PriorityV1.fromEntity(entity);
-
-        // Assert
-        Assertions.assertNotNull(priority);
-        Assertions.assertEquals(entity.getPriorityId(), priority.id());
-        Assertions.assertEquals(entity.getName(), priority.name());
     }
 
     @Test

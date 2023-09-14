@@ -29,7 +29,7 @@ public class TodoResourceTest {
     @Test
     void testGetPaginationSuccess() {
         // Arrange
-        List<Todo> data = List.of(new Todo(1L, "something", false, PriorityV1.Lowest.toEntity()));
+        List<Todo> data = List.of(new Todo(1L, "something", false, PriorityV1.Lowest.id()));
         Integer pageIndex = 0;
         Integer pageSize = 5;
         Integer totalPages = 200;
@@ -59,11 +59,6 @@ public class TodoResourceTest {
     @Test
     void testGetPaginationNotFound() {
         // Arrange
-        List<Todo> data = List.of(new Todo(1L, "something", false, PriorityV1.Lowest.toEntity()));
-        Integer pageIndex = 0;
-        Integer pageSize = 5;
-        Integer totalPages = 200;
-        Long totalItems = 1000L;
         when(todoRepository.getAllPaginated(anyInt(), anyInt(), any(), any()))
                 .thenReturn(Uni.createFrom().nullItem());
 
@@ -79,13 +74,14 @@ public class TodoResourceTest {
     @Test
     void testGetByIdSuccess() {
         // Arrange
-        Todo todo = new Todo(1L, "something", false, PriorityV1.Lowest.toEntity());
+        Long id = 1L;
+        Todo todo = new Todo(id, "something", false, PriorityV1.Lowest.id());
         when(todoRepository.getById(1L))
                 .thenReturn(Uni.createFrom().item(todo));
 
         // Act & Assert
         given()
-                .pathParam("id", 1L)
+                .pathParam("id", id)
                 .when().get("/todos/{id}")
                 .then()
                 .statusCode(200)
@@ -101,7 +97,7 @@ public class TodoResourceTest {
         // Arrange
         CreateTodoV1 createTodo = new CreateTodoV1("something", false, PriorityV1.Lowest.id());
         when(todoRepository.create(any(Todo.class)))
-                .thenReturn(Uni.createFrom().item(new Todo(1L, "something", false, PriorityV1.Lowest.toEntity())));
+                .thenReturn(Uni.createFrom().item(new Todo(1L, "something", false, PriorityV1.Lowest.id())));
 
         // Act & Assert
         given()
@@ -117,7 +113,8 @@ public class TodoResourceTest {
     @Test
     void testUpdateSuccess() {
         // Arrange
-        TodoV1 todo = new TodoV1(1L, "something", false, PriorityV1.Lowest);
+        Long id = 1L;
+        TodoV1 todo = new TodoV1(id, "something", false, PriorityV1.Lowest);
         when(todoRepository.update(any(Todo.class)))
                 .thenReturn(Uni.createFrom().item(todo.toEntity()));
 
@@ -126,7 +123,7 @@ public class TodoResourceTest {
                 .when()
                 .contentType(ContentType.JSON)
                 .body(todo)
-                .pathParam("id", 1L)
+                .pathParam("id", id)
                 .post("/todos/{id}")
                 .then()
                 .statusCode(200);
@@ -142,7 +139,7 @@ public class TodoResourceTest {
         // Act & Assert
         given()
                 .when()
-                .pathParam("id", 1L)
+                .pathParam("id", id)
                 .delete("/todos/{id}")
                 .then()
                 .statusCode(200);

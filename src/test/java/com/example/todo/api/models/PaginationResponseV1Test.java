@@ -1,13 +1,9 @@
 package com.example.todo.api.models;
 
-import com.example.todo.infrastructure.persistence.entities.Priority;
-import com.example.todo.infrastructure.persistence.entities.Todo;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @QuarkusTest

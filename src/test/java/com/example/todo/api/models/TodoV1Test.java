@@ -56,7 +56,7 @@ public class TodoV1Test {
         var title = "something";
         var completed = false;
         var priority = PriorityV1.Lowest;
-        var todos = List.of(new Todo(id, title, completed, priority.toEntity()));
+        var todos = List.of(new Todo(id, title, completed, priority.id()));
 
         // Act
         var todosV1 = TodoV1.fromEntities(todos);
@@ -78,7 +78,7 @@ public class TodoV1Test {
         var title = "something";
         var completed = false;
         var priority = PriorityV1.Lowest;
-        var todos = Uni.createFrom().item(List.of(new Todo(id, title, completed, priority.toEntity())));
+        var todos = Uni.createFrom().item(List.of(new Todo(id, title, completed, priority.id())));
 
         // Act
         var todosV1 = TodoV1.fromEntities(todos).await().indefinitely();

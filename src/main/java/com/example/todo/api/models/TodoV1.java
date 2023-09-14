@@ -9,7 +9,7 @@ import io.smallrye.mutiny.Uni;
 public record TodoV1(Long id, String title, boolean completed, PriorityV1 priority) {
 
     public Todo toEntity() {
-        return new Todo(id(), title(), completed(), priority.toEntity());
+        return new Todo(id(), title(), completed(), priority.id());
     }
 
     public static Uni<List<TodoV1>> fromEntities(Uni<List<Todo>> todos) {

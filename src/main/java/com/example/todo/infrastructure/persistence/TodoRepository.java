@@ -23,7 +23,7 @@ public class TodoRepository implements PanacheRepository<Todo> {
 
     @WithTransaction
     public Uni<PaginationResponseV1<Todo>> getAllPaginated(Integer pageIndex, Integer pageSize,
-                                                           Optional<String> searchQuery, Optional<Boolean> filterCompleted) {
+            Optional<String> searchQuery, Optional<Boolean> filterCompleted) {
         Map<String, Tuple<QueryType, Object>> parameters = new HashMap<>();
         addIfNotNull(parameters, QueryType.Like, "title", searchQuery);
         addIfNotNull(parameters, QueryType.Equals, "completed", filterCompleted);
@@ -117,5 +117,10 @@ public class TodoRepository implements PanacheRepository<Todo> {
         return delete("WHERE completed = ?1", completed).onItem().transform(result -> {
             return null;
         });
+    }
+
+    @WithTransaction
+    public Uni<Long> clearDatabse() {
+        return deleteAll();
     }
 }

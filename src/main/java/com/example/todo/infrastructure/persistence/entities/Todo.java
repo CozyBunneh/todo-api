@@ -1,13 +1,11 @@
 package com.example.todo.infrastructure.persistence.entities;
 
-import io.quarkus.arc.All;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Entity
@@ -32,10 +30,10 @@ public class Todo {
     public Todo() {
     }
 
-    public Todo(Long id, String title, Boolean completed, Priority priority) {
+    public Todo(Long id, String title, Boolean completed, Long priorityId) {
         this.id = id;
         this.title = title;
         this.completed = completed;
-        this.priority_id = priority.getPriorityId();
+        this.priority_id = priorityId;
     }
 }

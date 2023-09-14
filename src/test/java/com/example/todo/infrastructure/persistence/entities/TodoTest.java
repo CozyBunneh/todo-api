@@ -14,7 +14,7 @@ public class TodoTest {
         var id = 1L;
         var title = "something";
         var completed = false;
-        var priorityId = PriorityV1.Low.toEntity();
+        var priorityId = PriorityV1.Low.id();
 
         // Act
         var todo = new Todo(id, title, completed, priorityId);
@@ -24,6 +24,6 @@ public class TodoTest {
         Assertions.assertEquals(id, todo.getId());
         Assertions.assertEquals(title, todo.getTitle());
         Assertions.assertEquals(completed, todo.getCompleted());
-        Assertions.assertEquals(priorityId.getPriorityId(), todo.getPriority_id());
+        Assertions.assertEquals(priorityId, todo.getPriority_id());
     }
 }

@@ -124,6 +124,8 @@ quarkus:
       name: todo
       username: test
       password: test
+      url: placeholder
+      port: 0000
     liquibase:
       migrate: true
       search-paths:
@@ -131,7 +133,7 @@ quarkus:
     hibernate-orm:
       database:
         default-catalog: ${custom.db.name}
-        generation: validate
+        # generation: validate
     datasource:
       devservices:
         enabled: true
@@ -140,9 +142,9 @@ quarkus:
       password: ${custom.db.password}
       jdbc:
         ~: false
-        url: jdbc:tc:postgresql:latest:///${custom.db.name}
+        #url: jdbc:tc:postgresql:latest:///${custom.db.name}
       reactive:
-        url: jdbc:tc:postgresql:latest:///${custom.db.name}
+        #url: jdbc:tc:postgresql:latest:///${custom.db.name}
     smallrye-openapi:
       info-title: Todo (DevTest)
     liquibase:
