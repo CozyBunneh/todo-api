@@ -17,48 +17,52 @@ quarkus dev
 
 ### MacOs M1
 
-first do this so that linux/amd64 images can be built:
+WARNING, there's an issue with M1 Mac's and Podman for native builds atm: https://github.com/quarkusio/quarkus/issues/34666
+
+Optional step, you can use prepared build images as well but this guide assumes you do this:
 ```sh
 podman build -f src/main/docker/Dockerfile.graalvm -t graalvm .
+# or
+docker build -f src/main/docker/Dockerfile.graalvm -t graalvm .
 ```
 
 #### Creating a native executable
 
-You can create a native executable using: 
-
-```sh
-quarkus build --native --skip-tests # file generate a 64-bit ARM image
-# or
-./mvnw package -Pnative -Dmaven.test.skip=true -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=podman
-```
-You can then execute your native executable with: `./target/todo-1.0.0-SNAPSHOT-runner`
-
-The runner created will be 64-bit ARM aarch64.
-```sh
-./mvnw package -Pnative -Dmaven.test.skip=true -Dquarkus.native.container-build=true -Dquarkus.native.builder-image=graalvm
-```
-
-### Others
-
-#### Creating a native executable
+##### Podman
 
 You can create a native executable using: 
 
 ```sh
-quarkus build --native --skip-tests
-# or
-./mvnw package -Pnative -Dmaven.test.skip=true -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=podman
+./mvnw package -Pnative -Dmaven.test.skip=true -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=podman -Dquarkus.native.builder-iamge=graalvm
 ```
-You can then execute your native executable with: `./target/todo-1.0.0-SNAPSHOT-runner`
+You can then execute your native executable with: `./target/todo-1.0.0-SNAPSHOT-runner` if you are on an environemnt where that works.
 
-### Create a native docker image
+##### Docker
 
+You can create a native executable using: 
+
+```sh
+./mvnw package -Pnative -Dmaven.test.skip=true -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=docker -Dquarkus.native.builder-iamge=graalvm
+```
+You can then execute your native executable with: `./target/todo-1.0.0-SNAPSHOT-runner` if you are on an environemnt where that works.
+
+#### Create the native docker image
+
+Native:
+```sh
+podman build -f src/main/docker/Dockerfile.native -t todo/todo-api-native .
+# or
+docker build -f src/main/docker/Dockerfile.native -t todo/todo-api-native .
+```
+
+Native Micro:
 ```sh
 podman build -f src/main/docker/Dockerfile.native-micro -t todo/todo-api-native-micro .
+# or
+docker build -f src/main/docker/Dockerfile.native-micro -t todo/todo-api-native-micro .
 ```
 
 ## JVM
-
 
 ### build
 
@@ -98,6 +102,23 @@ If you need to recreate the machine:
 podman machine rm # to remove machine
 podman machine init # to init the machine
 ```
+
+### Setup Postgres
+
+```sh
+podman run -d --name postgres -e POSTGRES_PASSWORD=test -e POSTGRES_USER=test -p 5432:5432 postgres:11-alpine
+```
+
+get the ip so you can set it in the prod conf in application.yml:
+```sh
+podman container inspect -f '{{.NetworkSettings.IPAddress}}' postgres
+```
+
+## Docker Desktop
+
+### Install
+
+Go here, download and install: https://www.docker.com/products/docker-desktop/
 
 ### Setup Postgres
 
