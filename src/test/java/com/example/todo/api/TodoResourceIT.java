@@ -7,42 +7,21 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 
 import com.example.todo.api.models.PriorityV1;
 import com.example.todo.api.models.CreateTodoV1;
-import com.example.todo.infrastructure.persistence.TodoRepository;
 
-import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusIntegrationTest;
 import io.restassured.http.ContentType;
-import jakarta.inject.Inject;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 
-@QuarkusTest
+@QuarkusIntegrationTest
 @TestMethodOrder(OrderAnnotation.class)
-public class TodoResourceComponentTest {
-
-    @Inject
-    TodoRepository todoRepository;
+public class TodoResourceIT {
 
     @Test
     @Order(1)
-    void setup() {
-        // Inject 10 todos to test on if they aren't already there
-        try {
-            given()
-                    .queryParam("page_index", 0)
-                    .queryParam("page_size", 10)
-                    .when().get("/todos")
-                    .then()
-                    .statusCode(equalTo(200))
-                    .body("pageIndex", is(0))
-                    .body("pageSize", is(10))
-                    .body("totalItems", is(0))
-                    .body("totalPages", is(0));
-        } catch (AssertionError e) {
-            return;
-        }
-
+    void whenInject10Todos_thenShouldSuccess() {
         var todo1 = new CreateTodoV1("todo1", false, PriorityV1.Lowest.id());
         var todo2 = new CreateTodoV1("todo2", false, PriorityV1.Low.id());
         var todo3 = new CreateTodoV1("todo3", false, PriorityV1.Medium.id());
@@ -77,7 +56,7 @@ public class TodoResourceComponentTest {
 
     @Test
     @Order(2)
-    void testGetPaginationSuccess() {
+    void whenGetPaginated_thenShouldBeSuccess() {
         // Arrange
         Integer pageIndex = 1;
         Integer pageSize = 3;
@@ -109,7 +88,7 @@ public class TodoResourceComponentTest {
 
     @Test
     @Order(3)
-    void testGetById() {
+    void whenGetById_thenShouldBeSuccess() {
         // Arrange
         Long id = 1L;
 
@@ -128,7 +107,7 @@ public class TodoResourceComponentTest {
 
     @Test
     @Order(4)
-    void testCreate() {
+    void whenCreate_thenShouldBeSuccess() {
         // Arrange
         CreateTodoV1 createTodo = new CreateTodoV1("something", false, PriorityV1.Lowest.id());
 
@@ -156,7 +135,7 @@ public class TodoResourceComponentTest {
 
     @Test
     @Order(4)
-    void testDelete() {
+    void whenDelete_thenShouldBeSuccess() {
         // Arrange
         CreateTodoV1 createTodo = new CreateTodoV1("something", false, PriorityV1.Lowest.id());
         var response = given()
