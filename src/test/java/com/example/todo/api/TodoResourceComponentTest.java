@@ -19,8 +19,6 @@ import jakarta.inject.Inject;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
 
 @QuarkusTest
 @TestMethodOrder(OrderAnnotation.class)
@@ -138,19 +136,22 @@ public class TodoResourceComponentTest {
         CreateTodoV1 createTodo = new CreateTodoV1("something", false, PriorityV1.Lowest.id());
 
         // Act & Assert
-        given()
+        var response = given()
                 .when()
                 .contentType(ContentType.JSON)
                 .body(createTodo)
                 .put("/todos")
                 .then()
                 .statusCode(201)
-                .header("location", is("http://localhost:8081/todos/11"));
+                .extract();
+        var location = response.header("location");
+        var tokens = location.split("/");
+        var createdId = tokens[tokens.length - 1];
 
         // Cleanup
         given()
                 .when()
-                .pathParam("id", 11L)
+                .pathParam("id", createdId)
                 .delete("/todos/{id}")
                 .then()
                 .statusCode(200);
@@ -161,19 +162,22 @@ public class TodoResourceComponentTest {
     void testDelete() {
         // Arrange
         CreateTodoV1 createTodo = new CreateTodoV1("something", false, PriorityV1.Lowest.id());
-        given()
+        var response = given()
                 .when()
                 .contentType(ContentType.JSON)
                 .body(createTodo)
                 .put("/todos")
                 .then()
                 .statusCode(201)
-                .header("location", is("http://localhost:8081/todos/12"));
+                .extract();
+        var location = response.header("location");
+        var tokens = location.split("/");
+        var createdId = tokens[tokens.length - 1];
 
         // Act & Assert
         given()
                 .when()
-                .pathParam("id", 12L)
+                .pathParam("id", createdId)
                 .delete("/todos/{id}")
                 .then()
                 .statusCode(200);
