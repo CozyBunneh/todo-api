@@ -26,10 +26,7 @@ public class Todo {// extends PanacheEntity {
     @Column(name = "completed")
     private Boolean completed;
 
-    // @JoinColumn(name = "priority_id", foreignKey = @ForeignKey(name =
-    // "priority_id_fk"))
-    // @ManyToOne(optional = false, cascade = CascadeType.ALL)
-    // @ManyToOne(optional = false)
+    @Column(name = "priority_id")
     private Long priority_id;
 
     public Todo() {
