@@ -13,7 +13,7 @@ import lombok.Data;
 @Entity
 @Table(name = "todo")
 @Data
-public class Todo {// extends PanacheEntity {
+public class Todo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
