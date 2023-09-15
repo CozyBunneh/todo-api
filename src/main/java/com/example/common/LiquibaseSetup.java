@@ -1,15 +1,8 @@
-package com.example.todo.infrastructure.persistence;
-
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.util.List;
-import java.util.Optional;
+package com.example.common;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.example.common.CustomConfig;
 
 import io.quarkus.runtime.StartupEvent;
 import io.quarkus.runtime.util.ExceptionUtil;
@@ -25,12 +18,11 @@ import liquibase.database.DatabaseFactory;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
-import liquibase.resource.SearchPathResourceAccessor;
 
 @ApplicationScoped
-public class LiquidbaseSetup {
+public class LiquibaseSetup {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LiquidbaseSetup.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LiquibaseSetup.class);
 
     @ConfigProperty(name = "custom.liquibase.migrate")
     boolean runMigration;
