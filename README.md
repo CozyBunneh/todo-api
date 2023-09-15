@@ -137,7 +137,7 @@ podman container inspect -f '{{.NetworkSettings.IPAddress}}' postgres
 # native
 ./mvnw integration-test -Pnative
 
-# jvm (you can enable or disable the native tests in the pom)
+# jvm (you can enable or disable the native tests in the pom by flipping the property skipITs)
 ./mvnw integration-test
 ```
 
