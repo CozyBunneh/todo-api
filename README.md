@@ -134,7 +134,11 @@ podman container inspect -f '{{.NetworkSettings.IPAddress}}' postgres
 ## Run Integration Tests
 
 ```sh
+# native
 ./mvnw integration-test -Pnative
+
+# jvm (you can enable or disable the native tests in the pom)
+./mvnw integration-test
 ```
 
 ## Troubleshooting
